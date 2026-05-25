@@ -1,0 +1,537 @@
+/* PWD Assistant - Professional Branding Stylesheet */
+/* Color Palette:
+- Primary Dark: #121212 (backgrounds, footers, headers)
+- Primary Blue: #03A9F4 (accents, links, highlights)
+- Accent Orange: #FF9800 (call-to-action buttons)
+- Text Light: #E0E0E0 (text on dark backgrounds)
+- Text Dark: #212121 (primary text on light backgrounds)
+- Light Background: #FFFFFF
+- Subtle Borders: #EEEEEE
+*/
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+:root {
+    --primary-dark: #121212;
+    --primary-blue: #03A9F4;
+    --primary-blue-light: #4FC3F7;
+    --accent-orange: #FF9800;
+    --accent-orange-dark: #E65100;
+    --text-light: #E0E0E0;
+    --text-dark: #212121;
+    --text-muted: #757575;
+    --bg-light: #FFFFFF;
+    --bg-grey: #f5f5f5;
+    --border-color: #EEEEEE;
+    --spacing-unit: 20px;
+    --border-radius: 12px;
+    --shadow-sm: 0 4px 15px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    background-color: var(--bg-light);
+    color: var(--text-dark);
+    line-height: 1.7;
+    font-size: 16px;
+}
+
+.container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 var(--spacing-unit);
+}
+
+/* --- Header & Navigation --- */
+header {
+    background-color: var(--primary-dark);
+    padding: 15px 0;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+header .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: var(--primary-blue);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.logo i {
+    font-size: 1.6rem;
+}
+
+.nav-links {
+    list-style: none;
+    display: flex;
+    gap: 35px;
+}
+
+.nav-links a {
+    color: var(--text-light);
+    text-decoration: none;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+    padding-bottom: 5px;
+    border-bottom: 2px solid transparent;
+    transition: color 0.3s, border-color 0.3s;
+}
+
+.nav-links a:hover,
+.nav-links a.active {
+    color: var(--primary-blue);
+    border-bottom-color: var(--primary-blue);
+}
+
+.auth-buttons {
+    display: flex;
+    gap: 15px;
+}
+
+/* --- FIXED USER DROPDOWN (no disappearing) --- */
+.user-dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.user-dropdown > span {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    font-weight: 600;
+    color: var(--text-dark);
+    background-color: #f3f4f6;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.user-dropdown:hover > span {
+    background-color: #e5e7eb;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 100%;
+    margin-top: 0;                /* no gap */
+    padding-top: 8px;             /* bridge zone – keeps dropdown open */
+    background-color: #ffffff;
+    min-width: 180px;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+    border-radius: 0.5rem;
+    overflow: hidden;
+    z-index: 1050;
+    border: 1px solid var(--border-color);
+}
+
+.user-dropdown:hover .dropdown-content {
+    display: block;
+}
+
+.dropdown-content a {
+    display: block;
+    padding: 0.5rem 1rem;
+    text-decoration: none;
+    font-size: 0.9rem;
+    color: #374151;
+    white-space: nowrap;
+    transition: background 0.1s;
+}
+
+.dropdown-content a:hover {
+    background-color: #f3f4f6;
+    color: #111827;
+}
+
+/* --- Buttons --- */
+.btn {
+    padding: 10px 22px;
+    border-radius: 8px;
+    font-weight: 700;
+    text-decoration: none;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: all 0.3s ease;
+    display: inline-block;
+    text-align: center;
+}
+
+.btn-primary {
+    background-color: var(--accent-orange);
+    color: var(--primary-dark);
+    box-shadow: 0 4px 15px rgba(255, 152, 0, 0.4);
+}
+
+.btn-primary:hover {
+    background-color: var(--accent-orange-dark);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(255, 152, 0, 0.5);
+}
+
+.btn-secondary {
+    background-color: transparent;
+    color: var(--text-light);
+    border-color: var(--text-light);
+}
+
+.btn-secondary:hover {
+    background-color: var(--primary-blue);
+    color: var(--bg-light);
+    border-color: var(--primary-blue);
+}
+
+/* --- Forms --- */
+.form-group {
+    margin-bottom: 25px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: 700;
+    color: var(--text-dark);
+    text-transform: uppercase;
+    font-size: 0.9rem;
+}
+
+.form-control {
+    width: 100%;
+    padding: 14px 18px;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: var(--primary-blue);
+    box-shadow: 0 0 0 4px rgba(3, 169, 244, 0.2);
+}
+
+/* --- Footer --- */
+footer {
+    background-color: var(--primary-dark);
+    color: var(--text-light);
+    padding: 50px 0;
+    margin-top: 60px;
+}
+
+.footer-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.footer-content .logo {
+    margin-bottom: 10px;
+}
+
+/* --- General Page Styling --- */
+.page-header {
+    text-align: center;
+    padding: 60px 0;
+    background-color: var(--bg-grey);
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 50px;
+}
+
+.page-header h1 {
+    font-size: 2.8rem;
+    font-weight: 800;
+    color: var(--primary-dark);
+    margin-bottom: 10px;
+}
+
+.page-header p {
+    font-size: 1.1rem;
+    color: var(--text-muted);
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+/* --- Card Styling --- */
+.card {
+    background-color: var(--bg-light);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-md);
+    padding: 30px;
+    overflow: hidden;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
+}
+
+/* --- Animation Utilities --- */
+.fade-in-up {
+    opacity: 0;
+    transform: translateY(30px);
+    animation: fadeInUp 0.8s ease-out forwards;
+}
+
+@keyframes fadeInUp {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* --- Responsive Design --- */
+@media (max-width: 1024px) {
+    .nav-links {
+        display: none;
+    }
+    .page-header h1 {
+        font-size: 2.2rem;
+    }
+}
+
+@media (max-width: 768px) {
+    body {
+        font-size: 15px;
+    }
+    header .container {
+        flex-direction: column;
+        gap: 15px;
+    }
+    .footer-content {
+        flex-direction: column;
+        text-align: center;
+    }
+    .btn {
+        padding: 12px 25px;
+    }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────── */
+/* --- Chatbot & Voice Assistant Styles (fully integrated) --- */
+/* ─────────────────────────────────────────────────────────────────────────── */
+
+#open-chatbot-btn {
+    position: fixed;
+    bottom: 25px;
+    right: 25px;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background-color: var(--primary-blue);
+    color: white;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    z-index: 999;
+    transition: transform 0.3s ease;
+}
+
+#open-chatbot-btn:hover {
+    transform: scale(1.1);
+}
+
+.chatbot-container {
+    position: fixed;
+    bottom: 100px;
+    right: 25px;
+    width: 400px;
+    max-height: 550px;
+    background: white;
+    border-radius: var(--border-radius);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    display: none;
+    flex-direction: column;
+    z-index: 1000;
+    overflow: hidden;
+}
+
+.chat-header {
+    background: var(--primary-dark);
+    color: var(--primary-blue);
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.chat-header h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    flex: 1;
+}
+
+#close-chatbot-btn {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 2rem;
+    cursor: pointer;
+    line-height: 1;
+}
+
+/* Voice toggle button inside chat header */
+.voice-toggle-btn {
+    background: none;
+    border: none;
+    color: var(--primary-blue);
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 6px 10px;
+    border-radius: 6px;
+    margin-right: 8px;
+    transition: background 0.2s, color 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.voice-toggle-btn:hover {
+    background: rgba(3, 169, 244, 0.15);
+}
+
+.voice-toggle-btn.voice-muted {
+    color: var(--text-muted);
+}
+
+/* Microphone button inside chat input */
+.mic-btn {
+    background: #007bff !important;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 44px;
+    height: 44px;
+    margin-left: 8px;
+    cursor: pointer;
+    font-size: 1.2rem;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+}
+
+.mic-btn:hover {
+    background: #0056b3 !important;
+    transform: scale(1.02);
+}
+
+.chat-body {
+    flex-grow: 1;
+    padding: 15px;
+    overflow-y: auto;
+    background: var(--bg-grey);
+}
+
+.chat-message {
+    margin-bottom: 15px;
+    max-width: 85%;
+}
+
+.chat-message p {
+    padding: 12px;
+    border-radius: 10px;
+    line-height: 1.5;
+}
+
+.bot-message {
+    align-self: flex-start;
+}
+
+.bot-message p {
+    background: #E0E0E0;
+    color: var(--text-dark);
+}
+
+.user-message {
+    align-self: flex-end;
+    margin-left: auto;
+}
+
+.user-message p {
+    background: var(--primary-blue);
+    color: white;
+}
+
+.chat-input {
+    display: flex;
+    border-top: 1px solid var(--border-color);
+    padding: 10px;
+    gap: 8px;
+}
+
+.chat-input input {
+    flex-grow: 1;
+    border: 2px solid #e0e0e0;
+    border-radius: 25px;
+    padding: 12px 16px;
+    font-size: 1rem;
+}
+
+.chat-input input:focus {
+    outline: none;
+    border-color: var(--primary-blue);
+}
+
+.chat-input button {
+    background: var(--primary-blue);
+    color: white;
+    border: none;
+    border-radius: 25px;
+    padding: 0 20px;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+/* Typing indicator */
+.typing-indicator p {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    background: #E0E0E0;
+    padding: 12px 16px;
+    min-width: 60px;
+}
+
+.typing-indicator p span {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--text-muted);
+    animation: typingDot 1.2s infinite ease-in-out;
+}
+
+.typing-indicator p span:nth-child(2) { animation-delay: 0.2s; }
+.typing-indicator p span:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes typingDot {
+    0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+    30% { transform: translateY(-6px); opacity: 1; }
+}

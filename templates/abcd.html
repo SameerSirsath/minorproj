@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Select Login - PWD Assistant</title>
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Font Awesome CDN -->
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <!-- Google Font: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+        rel="stylesheet"
+    />
+
+    <style>
+        body {
+            font-family: "Inter", sans-serif;
+        }
+
+        /* Fade-in Animation */
+        .fade-in-up {
+            animation: fadeInUp 0.6s ease-out forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+<style>
+/* Chatbot Styles */
+        #open-chatbot-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--primary-blue);
+            color: white;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(37, 99, 235, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            z-index: 1000;
+            transition: all 0.3s;
+        }
+
+        #open-chatbot-btn:hover {
+            background: #1d4ed8;
+            transform: scale(1.1);
+        }
+
+        .chatbot-container {
+            position: fixed;
+            bottom: 100px;
+            right: 30px;
+            width: 400px;
+            height: 600px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            display: none;
+            flex-direction: column;
+            z-index: 1001;
+            overflow: hidden;
+        }
+
+        .chatbot-container.active {
+            display: flex;
+        }
+
+        .chat-header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chat-header h3 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .voice-toggle-btn {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            margin-right: 8px;
+        }
+        .voice-toggle-btn:hover {
+            background: rgba(255,255,255,0.4);
+        }
+        .voice-toggle-btn.voice-muted {
+            background: rgba(255,0,0,0.4);
+        }
+
+        #close-chatbot-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .chat-body {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background: #f8f9fa;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .chat-message {
+            max-width: 85%;
+            padding: 12px 16px;
+            border-radius: 18px;
+            line-height: 1.4;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        .bot-message {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-bottom-left-radius: 5px;
+            align-self: flex-start;
+        }
+
+        .user-message {
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            color: white;
+            border-bottom-right-radius: 5px;
+            align-self: flex-end;
+        }
+
+        .chat-input {
+            padding: 20px;
+            background: white;
+            border-top: 1px solid #e0e0e0;
+            display: flex;
+            gap: 10px;
+        }
+
+        .chat-input input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 25px;
+            outline: none;
+            font-size: 14px;
+        }
+
+        .chat-input input:focus {
+            border-color: #007bff;
+        }
+
+        .chat-input button {
+            padding: 12px 20px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .quick-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 15px 0;
+            justify-content: center;
+        }
+
+        .quick-action-btn {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 20px;
+            padding: 6px 12px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: #495057;
+        }
+
+        .quick-action-btn:hover {
+            background: #e9ecef;
+            transform: translateY(-1px);
+        }
+
+        .typing-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .typing-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background-color: #666;
+            animation: typing 1.4s infinite ease-in-out;
+        }
+
+        .typing-dot:nth-child(1) {
+            animation-delay: -0.32s;
+        }
+
+        .typing-dot:nth-child(2) {
+            animation-delay: -0.16s;
+        }
+
+        @keyframes typing {
+            0%, 80%, 100% {
+                transform: scale(0.8);
+                opacity: 0.5;
+            }
+            40% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive Design */
+        
+        .stt-btn {
+            background: none;
+            border: none;
+            color: #6c757d;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: color 0.3s;
+            margin-right: 5px;
+        }
+        .stt-btn:hover {
+            color: #007bff;
+        }
+        .stt-btn.listening {
+            color: red;
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+</style>
+</head>
+<body class="bg-gray-100 min-h-screen flex flex-col">
+
+    <!-- Header -->
+<header class="bg-white shadow-sm">
+    <div
+        class="container mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center"
+    >
+        <!-- Logo -->
+        <a
+            href="/"
+            class="text-xl font-bold text-blue-600 flex items-center"
+        >
+            <i class="fas fa-wheelchair-move mr-2"></i>
+            <span>PWD Assistant</span>
+        </a>
+
+        <!-- Auth Buttons -->
+        <div class="flex items-center space-x-4">
+            {% if user %}
+            <a href="/" class="text-blue-600 hover:text-blue-800 font-medium">
+                <i class="fas fa-home mr-1"></i> Home
+            </a>
+            <div class="relative group">
+                <button class="text-blue-600 hover:text-blue-800 font-medium flex items-center">
+                    <i class="fas fa-user-circle mr-1"></i>
+                    {{ user.fullname if user.fullname else user.username }}
+                    <i class="fas fa-chevron-down ml-1 text-sm"></i>
+                </button>
+                <div class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10 hidden group-hover:block">
+                    <a href="/profile" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                        <i class="fas fa-user-circle mr-2"></i> Profile
+                    </a>
+                    {% if user.user_type == 'ngo' %}
+                    <a href="/ngo/dashboard" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                        <i class="fas fa-tachometer-alt mr-2"></i> Dashboard
+                    </a>
+                    {% else %}
+                    <a href="/home" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                        <i class="fas fa-home mr-2"></i> Dashboard
+                    </a>
+                    {% endif %}
+                    <a href="/logout" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                        <i class="fas fa-sign-out-alt mr-2"></i> Logout
+                    </a>
+                </div>
+            </div>
+            {% else %}
+            <a href="/login" class="text-blue-600 hover:text-blue-800 font-medium">
+                <i class="fas fa-sign-in-alt mr-1"></i> Login
+            </a>
+            {% endif %}
+        </div>
+    </div>
+</header>
+    <!-- Main Section -->
+    <main
+        class="flex-grow flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8"
+    >
+        <div class="max-w-xl w-full space-y-8 text-center">
+            <div class="fade-in-up">
+                <h2 class="text-3xl font-bold text-gray-900">
+                    Welcome to PWD Assistant
+                </h2>
+                <p class="mt-2 text-lg text-gray-600">
+                    Please select your login type to continue.
+                </p>
+            </div>
+
+            <div
+                class="flex flex-col sm:flex-row gap-6 mt-10 fade-in-up"
+                style="animation-delay: 0.2s"
+            >
+                <!-- Individual Login -->
+                <a
+                    href="/login"
+                    class="group flex-1 bg-white p-8 rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1"
+                >
+                    <div class="flex flex-col items-center">
+                        <i
+                            class="fas fa-user-friends text-5xl text-blue-600 group-hover:text-blue-700 transition-colors"
+                        ></i>
+
+                        <h3 class="mt-6 text-2xl font-semibold text-gray-900">
+                            For Individuals
+                        </h3>
+                        <p class="mt-2 text-gray-600">
+                            Access the chatbot, browse schemes, and find resources.
+                        </p>
+                        <p
+                            class="mt-6 font-medium text-blue-600 group-hover:text-blue-700"
+                        >
+                            Continue as Individual
+                            <i class="fas fa-arrow-right ml-1"></i>
+                        </p>
+                    </div>
+                </a>
+
+                <!-- NGO Login -->
+                <a
+                    href="/login"
+                    class="group flex-1 bg-white p-8 rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1"
+                >
+                    <div class="flex flex-col items-center">
+                        <i
+                            class="fas fa-sitemap text-5xl text-green-600 group-hover:text-green-700 transition-colors"
+                        ></i>
+
+                        <h3 class="mt-6 text-2xl font-semibold text-gray-900">
+                            For NGO Managers
+                        </h3>
+                        <p class="mt-2 text-gray-600">
+                            Log in to manage student data and organization details.
+                        </p>
+                        <p
+                            class="mt-6 font-medium text-green-600 group-hover:text-green-700"
+                        >
+                            NGO Login <i class="fas fa-arrow-right ml-1"></i>
+                        </p>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Sign Up -->
+            <div class="mt-8 fade-in-up" style="animation-delay: 0.4s">
+                <p class="text-gray-600">
+                    Don't have an account?
+                    <a
+                        href="signup.html"
+                        class="text-blue-600 hover:text-blue-800 font-medium"
+                        >Sign up here</a
+                    >
+                </p>
+            </div>
+        </div>
+    </main>
+
+    <!-- Chatbot Button and Container -->
+    <button id="open-chatbot-btn">
+        <i class="fas fa-robot"></i>
+    </button>
+
+    <div class="chatbot-container" id="chatbot-container">
+        <div class="chat-header">
+            <h3><i class="fas fa-robot"></i> PWD Assistant</h3>
+            <button id="voice-toggle-btn" class="voice-toggle-btn" onclick="toggleVoice()" title="Voice ON — click to mute">
+                <i class="fas fa-volume-up"></i>
+            </button>
+            <button id="close-chatbot-btn">×</button>
+        </div>
+        <div class="chat-body" id="chat-body">
+            <!-- Messages will be inserted here by JavaScript -->
+        </div>
+        <div class="chat-input">
+            <input type="text" id="chat-input-field" placeholder="Ask about disability definitions, reservations, certificates..." autocomplete="off">
+            <button type="button" id="stt-btn" class="stt-btn" title="Click to speak"><i class="fas fa-microphone"></i></button>
+            <button type="button" id="send-message-btn">Send</button>
+        </div>
+    </div>
+
+    
+    <!-- Footer -->
+    <footer class="py-6 text-center">
+        <p class="text-sm text-gray-500">
+            © 2025 PWD Assistant. All rights reserved.
+        </p>
+    </footer>
+<script>
+        /* ── Voice Assistant (gTTS) ─────────────────────────────────────────── */
+        let currentAudio  = null;
+        let voiceEnabled  = localStorage.getItem('pwdVoiceEnabled') !== 'false'; // default ON
+
+        async function speakText(text, lang = 'en') {
+            if (!voiceEnabled || !text || !text.trim()) return;
+            if (currentAudio) { currentAudio.pause(); currentAudio = null; }
+
+            try {
+                const res = await fetch('/api/tts', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ text: text.replace(/<[^>]+>/g, ' ').trim(), lang })
+                });
+                if (!res.ok) return;
+
+                const blob  = await res.blob();
+                const url   = URL.createObjectURL(blob);
+                const audio = new Audio(url);
+                currentAudio = audio;
+
+                audio.onended = () => { URL.revokeObjectURL(url); currentAudio = null; };
+                audio.onerror = () => { URL.revokeObjectURL(url); currentAudio = null; };
+                audio.play();
+            } catch (e) {
+                console.warn('[PWD Voice] speakText error:', e);
+            }
+        }
+
+        function toggleVoice() {
+            voiceEnabled = !voiceEnabled;
+            localStorage.setItem('pwdVoiceEnabled', voiceEnabled);
+            if (!voiceEnabled && currentAudio) { currentAudio.pause(); currentAudio = null; }
+
+            const btn = document.getElementById('voice-toggle-btn');
+            if (!btn) return;
+            if (voiceEnabled) {
+                btn.innerHTML = '<i class="fas fa-volume-up"></i>';
+                btn.title     = 'Voice ON — click to mute';
+                btn.classList.remove('voice-muted');
+            } else {
+                btn.innerHTML = '<i class="fas fa-volume-mute"></i>';
+                btn.title     = 'Voice OFF — click to enable';
+                btn.classList.add('voice-muted');
+            }
+        }
+        /* ── End Voice Assistant ─────────────────────────────────────────────── */
+
+        // Chatbot functionality
+        const chatbotContainer = document.getElementById('chatbot-container');
+        const openChatbotBtn = document.getElementById('open-chatbot-btn');
+        const closeChatbotBtn = document.getElementById('close-chatbot-btn');
+        const chatBody = document.getElementById('chat-body');
+        const chatInput = document.getElementById('chat-input-field');
+        const sendMessageBtn = document.getElementById('send-message-btn');
+
+        /* ── Speech-To-Text (STT) ─────────────────────────────────────────── */
+        const sttBtn = document.getElementById('stt-btn');
+        if (sttBtn) {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (SpeechRecognition) {
+                const recognition = new SpeechRecognition();
+                recognition.lang = 'en-IN';
+                recognition.interimResults = false;
+                let isListening = false;
+                
+                sttBtn.addEventListener('click', () => {
+                    if (isListening) {
+                        recognition.stop();
+                    } else {
+                        try {
+                            recognition.start();
+                            sttBtn.classList.add('listening');
+                            isListening = true;
+                        } catch(e) {}
+                    }
+                });
+                
+                recognition.onresult = (event) => {
+                    const transcript = event.results[0][0].transcript;
+                    const inputField = document.getElementById('chat-input-field');
+                    if(inputField) inputField.value += (inputField.value ? ' ' : '') + transcript;
+                };
+                
+                recognition.onerror = (event) => {
+                    console.error("Speech recognition error:", event.error);
+                    sttBtn.classList.remove('listening');
+                    isListening = false;
+                    if(event.error === 'not-allowed') alert('Microphone access blocked or requires HTTPS.');
+                };
+                
+                recognition.onend = () => {
+                    sttBtn.classList.remove('listening');
+                    isListening = false;
+                };
+            } else {
+                sttBtn.style.display = 'none';
+            }
+        }
+
+
+        // Official PwD FAQ Knowledge Base from Government PDF
+        const knowledgeBase = {
+            "disability_definitions": {
+                "title": "Disability Definitions - Official Categories",
+                "content": `**Official Disability Categories as per Government Guidelines:**
+
+        **1. Blindness:**
+        • Visual acuity not exceeding 6/60 or 20/200 (Snellen) in the better eye with correcting lenses
+        • Limitation of the field of vision subtending an angle of 20 degree or worse
+
+        **2. Low Vision:**
+        • Impairment of visual functioning even after treatment or standard refractive correction
+        • Person uses or is potentially capable of using vision with appropriate assistive device
+
+        **3. Hearing Impairment:**
+        • Loss of sixty decibels or more in the better ear in the conversational range of frequencies
+
+        **4. Locomotor Disability:**
+        • Disability of the bones, joints or muscles leading to substantial restriction of movement of limbs
+        • Includes any form of cerebral palsy
+
+        **5. Cerebral Palsy:**
+        • Group of non-progressive conditions characterized by abnormal motor control posture
+        • Results from brain insult or injuries occurring in pre-natal, peri-natal or infant period
+
+        **Note:** All orthopedically handicapped persons are covered under "locomotor disability or cerebral palsy"`,
+                "category": "definitions",
+                "source": "Government of India - PwD FAQ",
+                "pdf_reference": "Pages 2-3: Official disability definitions"
+            },
+
+            "reservation_eligibility": {
+                "title": "Reservation Eligibility - 40% Disability Requirement",
+                "content": `**Eligibility Criteria for Government Job Reservation:**
+
+        **Minimum Disability Requirement:**
+        • **Not less than 40% of relevant disability** required
+        • Applies to all Central Government services/posts
+
+        **Documentation Required:**
+        • Valid Disability Certificate issued by competent authority
+        • Certificate must be from a Government-constituted Medical Board
+
+        **Medical Board Composition:**
+        • At least three members including one specialist in the particular field
+        • Boards constituted by Central or State Government
+
+        **Certificate Validity:**
+        • Permanent disability certificates for conditions with no chance of variation
+        • Time-bound certificates where disability degree may vary
+        • Right to hearing before refusal of certificate`,
+                "category": "reservation",
+                "source": "Government of India - PwD FAQ Q.4 & Q.5",
+                "pdf_reference": "Page 3: Q.4 & Q.5 - Disability percentage and certificate authority"
+            },
+
+            "job_identification": {
+                "title": "Job Identification for PwD Reservation",
+                "content": `**Jobs/Posts Identification Process:**
+
+        **Responsible Authority:**
+        • Ministry of Social Justice and Empowerment identifies suitable jobs/posts
+        • Initial notification dated 31.5.2001 (No. 16-25/99.NI.I)
+
+        **Key Provisions:**
+        • List is not exhaustive - Ministries can identify additional posts
+        • No Ministry/Department can exclude identified posts from reservation
+        • If post shifts between groups/grades, it remains identified
+
+        **Category-specific Reservation:**
+        • Posts identified for specific disability categories reserved only for those categories
+        • 3% reservation maintained separately for each category
+        • Equal distribution between categories where possible`,
+                "category": "employment",
+                "source": "Government of India - PwD FAQ Q.6",
+                "pdf_reference": "Pages 3-4: Q.6 - Job identification process"
+            },
+
+            "own_merit": {
+                "title": "Own Merit Candidates - Special Provision",
+                "content": `**Own Merit Candidate Definition:**
+
+        **Key Concept:**
+        • Persons with disabilities selected **without relaxed standards**
+        • Selected through general competition along with other candidates
+        • **Not adjusted against reserved quota**
+
+        **Application:**
+        • Applies to both direct recruitment and promotion
+        • Reserved vacancies filled separately from eligible PwD candidates
+        • Relaxed standards may apply for filling reserved quota only
+
+        **Purpose:**
+        • Prevents discrimination against meritorious PwD candidates
+        • Ensures genuine reservation benefits reach intended beneficiaries
+        • Maintains merit while ensuring adequate representation`,
+                "category": "reservation",
+                "source": "Government of India - PwD FAQ Q.8",
+                "pdf_reference": "Page 5: Q.8 - Own merit candidate definition"
+            }
+        };
+
+        // Keyword mapping for better matching
+        const keywordMapping = {
+            'blind': 'disability_definitions', 'blindness': 'disability_definitions',
+            'vision': 'disability_definitions', 'visual': 'disability_definitions',
+            'low vision': 'disability_definitions', 'hearing': 'disability_definitions',
+            'deaf': 'disability_definitions', 'locomotor': 'disability_definitions',
+            'cerebral palsy': 'disability_definitions', 'orthopedic': 'disability_definitions',
+            'reservation': 'reservation_eligibility', 'reserve': 'reservation_eligibility',
+            'quota': 'reservation_eligibility', 'percentage': 'reservation_eligibility',
+            '40%': 'reservation_eligibility', 'eligibility': 'reservation_eligibility',
+            'job': 'job_identification', 'posts': 'job_identification',
+            'identification': 'job_identification', 'suitable': 'job_identification',
+            'merit': 'own_merit', 'own merit': 'own_merit',
+            'general category': 'own_merit', 'without relaxation': 'own_merit'
+        };
+
+        // Toggle chatbot visibility
+        openChatbotBtn.addEventListener('click', () => {
+            chatbotContainer.classList.add('active');
+            if (chatBody.children.length === 0) {
+                showWelcomeMessage();
+            }
+        });
+
+        closeChatbotBtn.addEventListener('click', () => {
+            chatbotContainer.classList.remove('active');
+        });
+
+        // Send message function
+        function sendMessage() {
+            const message = chatInput.value.trim();
+            if (message === '') return;
+
+            // Add user message
+            addMessage(message, 'user');
+            chatInput.value = '';
+
+            // Show typing indicator
+            showTypingIndicator();
+
+            // Generate and show bot response after delay
+            setTimeout(() => {
+                removeTypingIndicator();
+                const response = generateResponse(message);
+                displayFormattedResponse(response);
+                addQuickActions();
+            }, 1000);
+        }
+
+        // Send message on button click or Enter key
+        sendMessageBtn.addEventListener('click', sendMessage);
+        chatInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        function showWelcomeMessage() {
+            const welcomeMessage = `**Welcome to PWD Assistant!** 🇮🇳
+
+        I provide accurate information based on the **Official Government FAQ for Persons with Disabilities**. 
+
+        🔍 **I can help you with:**
+        • Disability definitions and categories
+        • Reservation eligibility criteria  
+        • Disability certificate process
+        • Job identification guidelines
+        • Age relaxation and benefits
+        • Reservation computation methods
+        • Own merit candidate provisions
+
+        Ask me anything about PwD rights and reservations!`;
+            
+            addMessage(welcomeMessage, 'bot');
+            addQuickActions();
+        }
+
+        function addMessage(content, sender) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `chat-message ${sender}-message`;
+            
+            // Convert markdown-like formatting to HTML
+            let formattedContent = content
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\n/g, '<br>')
+                .replace(/•(.*?)(?=\n|$)/g, '<div style="margin: 5px 0; padding-left: 15px;">• $1</div>');
+            
+            messageDiv.innerHTML = formattedContent;
+            chatBody.appendChild(messageDiv);
+            chatBody.scrollTop = chatBody.scrollHeight;
+            if (sender === 'bot') speakText(content);
+        }
+
+        function showTypingIndicator() {
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'chat-message bot-message';
+            typingDiv.id = 'typing-indicator';
+            typingDiv.innerHTML = `
+                <div class="typing-indicator">
+                    Assistant is typing
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                </div>
+            `;
+            chatBody.appendChild(typingDiv);
+            chatBody.scrollTop = chatBody.scrollHeight;
+        }
+
+        function removeTypingIndicator() {
+            const typingIndicator = document.getElementById('typing-indicator');
+            if (typingIndicator) {
+                typingIndicator.remove();
+            }
+        }
+
+        function generateResponse(message) {
+            const lowerMessage = message.toLowerCase();
+            
+            // Check keyword mappings first
+            for (const [keyword, responseKey] of Object.entries(keywordMapping)) {
+                if (lowerMessage.includes(keyword) && knowledgeBase[responseKey]) {
+                    return knowledgeBase[responseKey];
+                }
+            }
+
+            // Check direct matches
+            for (const key in knowledgeBase) {
+                const keywords = key.split('_');
+                if (keywords.some(keyword => lowerMessage.includes(keyword))) {
+                    return knowledgeBase[key];
+                }
+            }
+
+            // Default response
+            return {
+                title: "How can I help you?",
+                content: "I specialize in the Official Government FAQ for Persons with Disabilities. You can ask me about:\n\n• Disability definitions and categories\n• Reservation eligibility (40% requirement)\n• Disability certificate process\n• Job identification\n• Own merit candidates\n\nTry using the quick action buttons below for specific topics!",
+                category: "general",
+                source: "Government of India - PwD FAQ",
+                pdf_reference: "Complete FAQ Document"
+            };
+        }
+
+        function displayFormattedResponse(responseData) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'chat-message bot-message';
+            
+            let content = `
+                <div style="margin-bottom: 10px;">
+                    <strong>${responseData.title}</strong>
+                    <span class="category-tag">${responseData.category}</span>
+                </div>
+                <div class="info-card">
+                    ${formatContent(responseData.content)}
+                </div>
+                <div class="pdf-reference">
+                    📄 <strong>Source:</strong> ${responseData.source}<br>
+                    📖 <strong>Reference:</strong> ${responseData.pdf_reference}
+                </div>
+            `;
+            
+            messageDiv.innerHTML = content;
+            chatBody.appendChild(messageDiv);
+            chatBody.scrollTop = chatBody.scrollHeight;
+            speakText(responseData.title + '. ' + responseData.content);
+        }
+
+        function formatContent(content) {
+            return content
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\n/g, '<br>')
+                .replace(/•(.*?)(?=\n|$)/g, '<div style="margin: 8px 0; padding-left: 15px;">• $1</div>');
+        }
+
+        function addQuickActions() {
+            const quickActionsDiv = document.createElement('div');
+            quickActionsDiv.className = 'quick-actions';
+            
+            const actions = [
+                'Disability Definitions',
+                'Reservation Eligibility', 
+                'Job Identification',
+                'Own Merit'
+            ];
+            
+            actions.forEach(action => {
+                const button = document.createElement('button');
+                button.className = 'quick-action-btn';
+                button.textContent = action;
+                button.onclick = () => {
+                    chatInput.value = action;
+                    sendMessage();
+                };
+                quickActionsDiv.appendChild(button);
+            });
+            
+            chatBody.appendChild(quickActionsDiv);
+            chatBody.scrollTop = chatBody.scrollHeight;
+        }
+
+        // Initialize chatbot with welcome message when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            // Welcome message will show when chatbot is opened
+        });
+    </script>
+</body>
+</html>

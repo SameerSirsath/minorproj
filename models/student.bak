@@ -1,0 +1,23 @@
+from models.database import db
+from datetime import datetime
+
+class NGOStudent(db.Model):
+    __tablename__ = 'ngo_students'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    ngo_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    name = db.Column(db.String(100), nullable=False)
+    age = db.Column(db.Integer)
+    disability_type = db.Column(db.String(100))
+    certificate_file = db.Column(db.String(255))
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'age': self.age,
+            'disability_type': self.disability_type,
+            'certificate_file': self.certificate_file,
+            'created_at': self.created_at.isoformat() if self.created_at else None
+        }
