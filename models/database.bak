@@ -1,0 +1,29 @@
+from flask_sqlalchemy import SQLAlchemy
+from flask_login import LoginManager
+
+db = SQLAlchemy()
+login_manager = LoginManager()
+login_manager.login_view = 'auth.login'
+
+def init_database(app):
+    db.init_app(app)
+    login_manager.init_app(app)
+    
+    with app.app_context():
+        db.create_all()
+        setup_database()
+        print("Database initialized successfully")
+
+def setup_database():
+    """Setup database with required tables"""
+    # Import inside function to avoid circular imports
+    from models.user import User
+    from models.student import NGOStudent
+    
+    try:
+        # Create tables if they don't exist
+        db.create_all()
+        print("✓ Database tables created/verified")
+            
+    except Exception as e:
+        print(f"✗ Database setup failed: {e}")

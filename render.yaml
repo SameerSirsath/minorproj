@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: pwd-assistant
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.4
+      - key: MONGO_URI
+        sync: false # User must set this in the Render dashboard
+      - key: SECRET_KEY
+        generateValue: true
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: YOUTUBE_API_KEY
+        sync: false

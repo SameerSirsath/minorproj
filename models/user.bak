@@ -1,0 +1,45 @@
+from werkzeug.security import generate_password_hash, check_password_hash
+from flask_login import UserMixin
+from models.database import db, login_manager
+from datetime import datetime
+import bcrypt
+
+class User(UserMixin, db.Model):
+    __tablename__ = 'users'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    full_name = db.Column(db.String(100), nullable=False)
+    username = db.Column(db.String(50), unique=True, nullable=False)
+    email = db.Column(db.String(100), unique=True, nullable=False)
+    password_hash = db.Column(db.String(200), nullable=False)
+    user_type = db.Column(db.Enum('individual', 'ngo'), default='individual')
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    # Relationships
+    students = db.relationship('NGOStudent', backref='ngo', lazy='dynamic')
+    
+    @property
+    def password(self):
+        raise AttributeError('password is not a readable attribute')
+    
+    @password.setter
+    def password(self, password):
+        # Use bcrypt for password hashing (consistent with your original code)
+        self.password_hash = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+    
+    def verify_password(self, password):
+        return bcrypt.checkpw(password.encode('utf-8'), self.password_hash.encode('utf-8'))
+    
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'full_name': self.full_name,
+            'username': self.username,
+            'email': self.email,
+            'user_type': self.user_type,
+            'created_at': self.created_at.isoformat() if self.created_at else None
+        }
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))

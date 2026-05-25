@@ -1,0 +1,1319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PWD Assistant - Services Hub</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-blue: #2563eb;
+            --primary-dark: #1e293b;
+            --bg-light: #ffffff;
+            --text-muted: #64748b;
+            --border-light: #e2e8f0;
+            --primary-blue-light: #dbeafe;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--primary-dark);
+            background-color: #f8fafc;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header Styles */
+        header {
+            background: var(--bg-light);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+
+        header .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 20px;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-blue);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--primary-dark);
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--primary-blue);
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        /* User Dropdown Styles */
+        #loginBtn {
+            list-style: none;
+        }
+
+        .user-dropdown {
+            position: relative;
+            display: inline-block;
+            cursor: pointer;
+        }
+
+        .user-dropdown > span {
+            padding: 0.5rem 1rem;
+            font-weight: 600;
+            color: var(--primary-dark);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            background-color: var(--bg-light);
+            min-width: 180px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            z-index: 1001;
+            border: 1px solid var(--border-light);
+            top: 100%;
+            
+        }
+
+        .user-dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        .dropdown-content a {
+            color: var(--primary-dark);
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            border-radius: 8px;
+            transition: background-color 0.3s;
+        }
+
+        .dropdown-content a:hover {
+            background-color: var(--border-light);
+            color: var(--primary-blue);
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background: var(--primary-blue);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #1d4ed8;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--primary-blue);
+            border-color: var(--primary-blue);
+        }
+
+        .btn-secondary:hover {
+            background: var(--primary-blue);
+            color: white;
+        }
+
+        /* Main Content */
+        main {
+            margin-top: 80px;
+        }
+
+        .page-header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 60px 0;
+            text-align: center;
+        }
+
+        .page-header h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 15px;
+        }
+
+        .page-header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .card {
+            background: var(--bg-light);
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            padding: 30px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Form Styles */
+        .planner-form {
+            max-width: 800px;
+            margin: 0 auto 50px auto;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--primary-dark);
+        }
+
+        .form-control {
+            padding: 12px 15px;
+            border: 2px solid var(--border-light);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+        }
+
+        .search-button-container {
+            text-align: center;
+        }
+
+        /* Results Section */
+        #planResult {
+            margin-top: 50px;
+            display: none;
+        }
+
+        .result-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .result-header h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-dark);
+        }
+
+        .resource-list {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 30px;
+        }
+
+        .resource-item {
+            border-left: 5px solid var(--primary-blue);
+        }
+
+        .resource-item h3 {
+            font-size: 1.3rem;
+            color: var(--primary-dark);
+            margin-bottom: 10px;
+        }
+
+        .resource-meta {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+
+        .meta-tag {
+            background-color: var(--primary-blue-light);
+            color: var(--primary-dark);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+
+        /* Animations */
+        .fade-in-up {
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Footer */
+        footer {
+            background: var(--primary-dark);
+            color: var(--bg-light);
+            padding: 40px 0;
+            text-align: center;
+        }
+
+        .footer-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Chatbot Styles */
+        #open-chatbot-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--primary-blue);
+            color: white;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(37, 99, 235, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            z-index: 1000;
+            transition: all 0.3s;
+        }
+
+        #open-chatbot-btn:hover {
+            background: #1d4ed8;
+            transform: scale(1.1);
+        }
+
+        .chatbot-container {
+            position: fixed;
+            bottom: 100px;
+            right: 30px;
+            width: 400px;
+            height: 600px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            display: none;
+            flex-direction: column;
+            z-index: 1001;
+            overflow: hidden;
+        }
+
+        .chatbot-container.active {
+            display: flex;
+        }
+
+        .chat-header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chat-header h3 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .voice-toggle-btn {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            margin-right: 8px;
+        }
+        .voice-toggle-btn:hover {
+            background: rgba(255,255,255,0.4);
+        }
+        .voice-toggle-btn.voice-muted {
+            background: rgba(255,0,0,0.4);
+        }
+
+        #close-chatbot-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .chat-body {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background: #f8f9fa;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .chat-message {
+            max-width: 85%;
+            padding: 12px 16px;
+            border-radius: 18px;
+            line-height: 1.4;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        .bot-message {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-bottom-left-radius: 5px;
+            align-self: flex-start;
+        }
+
+        .user-message {
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            color: white;
+            border-bottom-right-radius: 5px;
+            align-self: flex-end;
+        }
+
+        .chat-input {
+            padding: 20px;
+            background: white;
+            border-top: 1px solid #e0e0e0;
+            display: flex;
+            gap: 10px;
+        }
+
+        .chat-input input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 25px;
+            outline: none;
+            font-size: 14px;
+        }
+
+        .chat-input input:focus {
+            border-color: #007bff;
+        }
+
+        .chat-input button {
+            padding: 12px 20px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .quick-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 15px 0;
+            justify-content: center;
+        }
+
+        .quick-action-btn {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 20px;
+            padding: 6px 12px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: #495057;
+        }
+
+        .quick-action-btn:hover {
+            background: #e9ecef;
+            transform: translateY(-1px);
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .chatbot-container {
+                width: 90vw;
+                height: 70vh;
+                right: 5vw;
+                bottom: 80px;
+            }
+
+            .page-header h1 {
+                font-size: 2rem;
+            }
+        }
+    
+        /* Schemes Dropdown */
+        .nav-dropdown {
+            position: relative;
+            display: inline-block;
+        }
+        .nav-dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: var(--bg-light);
+            min-width: 200px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            z-index: 1001;
+            border: 1px solid var(--border-light);
+            top: 100%;
+        }
+        .nav-dropdown:hover .nav-dropdown-content {
+            display: block;
+        }
+        .nav-dropdown-content a {
+            color: var(--primary-dark);
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            border-bottom: 1px solid var(--border-light);
+            transition: background-color 0.3s;
+        }
+        .nav-dropdown-content a:hover {
+            background-color: var(--border-light);
+            color: var(--primary-blue);
+        }
+        .stt-btn {
+            background: none;
+            border: none;
+            color: #6c757d;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: color 0.3s;
+            margin-right: 5px;
+        }
+        .stt-btn:hover {
+            color: #007bff;
+        }
+        .stt-btn.listening {
+            color: red;
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+</style>
+</head>
+<body>
+<header>
+    <div class="container">
+        <a href="/" class="logo">
+            <i class="fas fa-wheelchair-move"></i>
+            PWD Assistant
+        </a>
+        <nav>
+            <ul class="nav-links">
+                <li><a href="/home" class="active">Home</a></li>
+                                <li><a href="/services">Services Hub</a></li>
+                <li><a href="/resources">Resources</a></li>
+                <li><a href="/community">Community</a></li>
+                <li><a href="/about">About</a></li>
+            </ul>
+        </nav>
+        <div class="auth-buttons">
+            {% if user %}
+            <a href="/" class="btn btn-secondary" style="margin-right: 10px;">
+                <i class="fas fa-home"></i> Home
+            </a>
+            <div class="user-dropdown">
+                <span>👤 {{ user.fullname if user.fullname else user.username }}</span>
+                <div class="dropdown-content">
+                    <a href="/profile"><i class="fas fa-user-circle"></i> Profile</a>
+                    <a href="/home"><i class="fas fa-home"></i> Dashboard</a>
+                    <a href="/logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                </div>
+            </div>
+            {% else %}
+            <a href="/" class="btn btn-secondary" style="margin-right: 10px;">
+                <i class="fas fa-home"></i> Home
+            </a>
+            <a href="/login" class="btn btn-secondary">Login/Signup</a>
+            {% endif %}
+        </div>
+    </div>
+</header>
+    <main>
+        <section class="page-header">
+            <h1>Centralized Services Hub</h1>
+            <p>Discover comprehensive PwD schemes, benefits, and support services</p>
+        </section>
+
+        <div class="container">
+            <div class="planner-form card">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="domain">Select Information Category</label>
+                        <select id="domain" class="form-control">
+                            <option value="">-- Choose Category --</option>
+                            <option value="employment">Employment Reservations</option>
+                            <option value="education">Education Benefits</option>
+                            <option value="healthcare">Healthcare Schemes</option>
+                            <option value="financial">Financial Assistance</option>
+                            <option value="certification">Disability Certification</option>
+                            <option value="legal">Legal Rights Protections</option>
+                            <option value="travel">Travel Concessions</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="search-button-container">
+                    <button class="btn btn-primary" onclick="searchResources()">
+                        <i class="fas fa-search"></i> Explore Benefits
+                    </button>
+                </div>
+            </div>
+
+            <div id="planResult"></div>
+        </div>
+    </main>
+
+    <!-- Chatbot Button and Container -->
+    <button id="open-chatbot-btn">
+        <i class="fas fa-robot"></i>
+    </button>
+
+    <div class="chatbot-container" id="chatbot-container">
+        <div class="chat-header">
+            <h3><i class="fas fa-robot"></i> PWD Assistant</h3>
+            <button id="voice-toggle-btn" class="voice-toggle-btn" onclick="toggleVoice()" title="Voice ON — click to mute">
+                <i class="fas fa-volume-up"></i>
+            </button>
+            <button id="close-chatbot-btn">×</button>
+        </div>
+        <div class="chat-body" id="chat-body">
+            <!-- Messages will be inserted here by JavaScript -->
+        </div>
+        <div class="chat-input">
+            <input type="text" id="chat-input-field" placeholder="Ask about reservations, certificates, benefits..." autocomplete="off">
+            <button type="button" id="stt-btn" class="stt-btn" title="Click to speak"><i class="fas fa-microphone"></i></button>
+            <button type="button" id="send-message-btn">Send</button>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <a href="index.html" class="logo" style="color: var(--bg-light);">
+                    <i class="fas fa-wheelchair-move"></i>
+                    PWD Assistant
+                </a>
+                <p>&copy; 2025 PWD Assistant. Empowering Digital Inclusion.</p>
+                <a href="about.html" class="btn btn-secondary" style="color: var(--primary-blue); border-color: var(--primary-blue);">Project Details</a>
+            </div>
+        </div>
+    </footer>
+
+<script>
+        /* ── Voice Assistant (gTTS) ─────────────────────────────────────────── */
+        let currentAudio  = null;
+        let voiceEnabled  = localStorage.getItem('pwdVoiceEnabled') !== 'false'; // default ON
+
+        async function speakText(text, lang = 'en') {
+            if (!voiceEnabled || !text || !text.trim()) return;
+            if (currentAudio) { currentAudio.pause(); currentAudio = null; }
+
+            try {
+                const res = await fetch('/api/tts', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ text: text.replace(/<[^>]+>/g, ' ').trim(), lang })
+                });
+                if (!res.ok) return;
+
+                const blob  = await res.blob();
+                const url   = URL.createObjectURL(blob);
+                const audio = new Audio(url);
+                currentAudio = audio;
+
+                audio.onended = () => { URL.revokeObjectURL(url); currentAudio = null; };
+                audio.onerror = () => { URL.revokeObjectURL(url); currentAudio = null; };
+                audio.play();
+            } catch (e) {
+                console.warn('[PWD Voice] speakText error:', e);
+            }
+        }
+
+        function toggleVoice() {
+            voiceEnabled = !voiceEnabled;
+            localStorage.setItem('pwdVoiceEnabled', voiceEnabled);
+            if (!voiceEnabled && currentAudio) { currentAudio.pause(); currentAudio = null; }
+
+            const btn = document.getElementById('voice-toggle-btn');
+            if (!btn) return;
+            if (voiceEnabled) {
+                btn.innerHTML = '<i class="fas fa-volume-up"></i>';
+                btn.title     = 'Voice ON — click to mute';
+                btn.classList.remove('voice-muted');
+            } else {
+                btn.innerHTML = '<i class="fas fa-volume-mute"></i>';
+                btn.title     = 'Voice OFF — click to enable';
+                btn.classList.add('voice-muted');
+            }
+        }
+        /* ── End Voice Assistant ─────────────────────────────────────────────── */
+
+        // Chatbot functionality
+        const chatbotContainer = document.getElementById('chatbot-container');
+        const openChatbotBtn = document.getElementById('open-chatbot-btn');
+        const closeChatbotBtn = document.getElementById('close-chatbot-btn');
+        const chatBody = document.getElementById('chat-body');
+        const chatInput = document.getElementById('chat-input-field');
+        const sendMessageBtn = document.getElementById('send-message-btn');
+
+        /* ── Speech-To-Text (STT) ─────────────────────────────────────────── */
+        const sttBtn = document.getElementById('stt-btn');
+        if (sttBtn) {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (SpeechRecognition) {
+                const recognition = new SpeechRecognition();
+                recognition.lang = 'en-IN';
+                recognition.interimResults = false;
+                let isListening = false;
+                
+                sttBtn.addEventListener('click', () => {
+                    if (isListening) {
+                        recognition.stop();
+                    } else {
+                        try {
+                            recognition.start();
+                            sttBtn.classList.add('listening');
+                            isListening = true;
+                        } catch(e) {}
+                    }
+                });
+                
+                recognition.onresult = (event) => {
+                    const transcript = event.results[0][0].transcript;
+                    const inputField = document.getElementById('chat-input-field');
+                    if(inputField) inputField.value += (inputField.value ? ' ' : '') + transcript;
+                };
+                
+                recognition.onerror = (event) => {
+                    console.error("Speech recognition error:", event.error);
+                    sttBtn.classList.remove('listening');
+                    isListening = false;
+                    if(event.error === 'not-allowed') alert('Microphone access blocked or requires HTTPS.');
+                };
+                
+                recognition.onend = () => {
+                    sttBtn.classList.remove('listening');
+                    isListening = false;
+                };
+            } else {
+                sttBtn.style.display = 'none';
+            }
+        }
+
+
+        // Official PwD FAQ Knowledge Base from Government PDF
+        const knowledgeBase = {
+            "disability_definitions": {
+                "title": "Disability Definitions - Official Categories",
+                "content": `**Official Disability Categories as per Government Guidelines:**
+
+        **1. Blindness:**
+        • Visual acuity not exceeding 6/60 or 20/200 (Snellen) in the better eye with correcting lenses
+        • Limitation of the field of vision subtending an angle of 20 degree or worse
+
+        **2. Low Vision:**
+        • Impairment of visual functioning even after treatment or standard refractive correction
+        • Person uses or is potentially capable of using vision with appropriate assistive device
+
+        **3. Hearing Impairment:**
+        • Loss of sixty decibels or more in the better ear in the conversational range of frequencies
+
+        **4. Locomotor Disability:**
+        • Disability of the bones, joints or muscles leading to substantial restriction of movement of limbs
+        • Includes any form of cerebral palsy
+
+        **5. Cerebral Palsy:**
+        • Group of non-progressive conditions characterized by abnormal motor control posture
+        • Results from brain insult or injuries occurring in pre-natal, peri-natal or infant period
+
+        **Note:** All orthopedically handicapped persons are covered under "locomotor disability or cerebral palsy"`,
+                "category": "definitions",
+                "source": "Government of India - PwD FAQ",
+                "pdf_reference": "Pages 2-3: Official disability definitions"
+            },
+
+            "reservation_eligibility": {
+                "title": "Reservation Eligibility - 40% Disability Requirement",
+                "content": `**Eligibility Criteria for Government Job Reservation:**
+
+        **Minimum Disability Requirement:**
+        • **Not less than 40% of relevant disability** required
+        • Applies to all Central Government services/posts
+
+        **Documentation Required:**
+        • Valid Disability Certificate issued by competent authority
+        • Certificate must be from a Government-constituted Medical Board
+
+        **Medical Board Composition:**
+        • At least three members including one specialist in the particular field
+        • Boards constituted by Central or State Government
+
+        **Certificate Validity:**
+        • Permanent disability certificates for conditions with no chance of variation
+        • Time-bound certificates where disability degree may vary
+        • Right to hearing before refusal of certificate`,
+                "category": "reservation",
+                "source": "Government of India - PwD FAQ Q.4 & Q.5",
+                "pdf_reference": "Page 3: Q.4 & Q.5 - Disability percentage and certificate authority"
+            },
+
+            "job_identification": {
+                "title": "Job Identification for PwD Reservation",
+                "content": `**Jobs/Posts Identification Process:**
+
+        **Responsible Authority:**
+        • Ministry of Social Justice and Empowerment identifies suitable jobs/posts
+        • Initial notification dated 31.5.2001 (No. 16-25/99.NI.I)
+
+        **Key Provisions:**
+        • List is not exhaustive - Ministries can identify additional posts
+        • No Ministry/Department can exclude identified posts from reservation
+        • If post shifts between groups/grades, it remains identified
+
+        **Category-specific Reservation:**
+        • Posts identified for specific disability categories reserved only for those categories
+        • 3% reservation maintained separately for each category
+        • Equal distribution between categories where possible`,
+                "category": "employment",
+                "source": "Government of India - PwD FAQ Q.6",
+                "pdf_reference": "Pages 3-4: Q.6 - Job identification process"
+            },
+
+            "own_merit": {
+                "title": "Own Merit Candidates - Special Provision",
+                "content": `**Own Merit Candidate Definition:**
+
+        **Key Concept:**
+        • Persons with disabilities selected **without relaxed standards**
+        • Selected through general competition along with other candidates
+        • **Not adjusted against reserved quota**
+
+        **Application:**
+        • Applies to both direct recruitment and promotion
+        • Reserved vacancies filled separately from eligible PwD candidates
+        • Relaxed standards may apply for filling reserved quota only
+
+        **Purpose:**
+        • Prevents discrimination against meritorious PwD candidates
+        • Ensures genuine reservation benefits reach intended beneficiaries
+        • Maintains merit while ensuring adequate representation`,
+                "category": "reservation",
+                "source": "Government of India - PwD FAQ Q.8",
+                "pdf_reference": "Page 5: Q.8 - Own merit candidate definition"
+            }
+        };
+
+        // Keyword mapping for better matching
+        const keywordMapping = {
+            'blind': 'disability_definitions', 'blindness': 'disability_definitions',
+            'vision': 'disability_definitions', 'visual': 'disability_definitions',
+            'low vision': 'disability_definitions', 'hearing': 'disability_definitions',
+            'deaf': 'disability_definitions', 'locomotor': 'disability_definitions',
+            'cerebral palsy': 'disability_definitions', 'orthopedic': 'disability_definitions',
+            'reservation': 'reservation_eligibility', 'reserve': 'reservation_eligibility',
+            'quota': 'reservation_eligibility', 'percentage': 'reservation_eligibility',
+            '40%': 'reservation_eligibility', 'eligibility': 'reservation_eligibility',
+            'job': 'job_identification', 'posts': 'job_identification',
+            'identification': 'job_identification', 'suitable': 'job_identification',
+            'merit': 'own_merit', 'own merit': 'own_merit',
+            'general category': 'own_merit', 'without relaxation': 'own_merit'
+        };
+
+        // Toggle chatbot visibility
+        openChatbotBtn.addEventListener('click', () => {
+            chatbotContainer.classList.add('active');
+            if (chatBody.children.length === 0) {
+                showWelcomeMessage();
+            }
+        });
+
+        closeChatbotBtn.addEventListener('click', () => {
+            chatbotContainer.classList.remove('active');
+        });
+
+        // Send message function
+        function sendMessage() {
+            const message = chatInput.value.trim();
+            if (message === '') return;
+
+            if (typeof unlockAudio === 'function') {
+                unlockAudio();
+            }
+
+            // Add user message
+            addMessage(message, 'user');
+            chatInput.value = '';
+
+            // Show typing indicator
+            showTypingIndicator();
+
+            // Generate and show bot response after delay
+            setTimeout(() => {
+                removeTypingIndicator();
+                const response = generateResponse(message);
+                displayFormattedResponse(response);
+                addQuickActions();
+            }, 1000);
+        }
+
+        // Send message on button click or Enter key
+        sendMessageBtn.addEventListener('click', sendMessage);
+        chatInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        function showWelcomeMessage() {
+            const welcomeMessage = `**Welcome to PWD Assistant!** 🇮🇳
+
+        I provide accurate information based on the **Official Government FAQ for Persons with Disabilities**. 
+
+        🔍 **I can help you with:**
+        • Disability definitions and categories
+        • Reservation eligibility criteria  
+        • Disability certificate process
+        • Job identification guidelines
+        • Age relaxation and benefits
+        • Reservation computation methods
+        • Own merit candidate provisions
+
+        Ask me anything about PwD rights and reservations!`;
+            
+            addMessage(welcomeMessage, 'bot');
+            addQuickActions();
+        }
+
+        function addMessage(content, sender) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `chat-message ${sender}-message`;
+            
+            // Convert markdown-like formatting to HTML
+            let formattedContent = content
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\n/g, '<br>')
+                .replace(/•(.*?)(?=\n|$)/g, '<div style="margin: 5px 0; padding-left: 15px;">• $1</div>');
+            
+            messageDiv.innerHTML = formattedContent;
+            chatBody.appendChild(messageDiv);
+            chatBody.scrollTop = chatBody.scrollHeight;
+            if (sender === 'bot') speakText(content);
+        }
+
+        function showTypingIndicator() {
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'chat-message bot-message';
+            typingDiv.id = 'typing-indicator';
+            typingDiv.innerHTML = `
+                <div class="typing-indicator">
+                    Assistant is typing
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                </div>
+            `;
+            chatBody.appendChild(typingDiv);
+            chatBody.scrollTop = chatBody.scrollHeight;
+        }
+
+        function removeTypingIndicator() {
+            const typingIndicator = document.getElementById('typing-indicator');
+            if (typingIndicator) {
+                typingIndicator.remove();
+            }
+        }
+
+        function generateResponse(message) {
+            const lowerMessage = message.toLowerCase();
+            
+            // Check keyword mappings first
+            for (const [keyword, responseKey] of Object.entries(keywordMapping)) {
+                if (lowerMessage.includes(keyword) && knowledgeBase[responseKey]) {
+                    return knowledgeBase[responseKey];
+                }
+            }
+
+            // Check direct matches
+            for (const key in knowledgeBase) {
+                const keywords = key.split('_');
+                if (keywords.some(keyword => lowerMessage.includes(keyword))) {
+                    return knowledgeBase[key];
+                }
+            }
+
+            // Default response
+            return {
+                title: "How can I help you?",
+                content: "I specialize in the Official Government FAQ for Persons with Disabilities. You can ask me about:\n\n• Disability definitions and categories\n• Reservation eligibility (40% requirement)\n• Disability certificate process\n• Job identification\n• Own merit candidates\n\nTry using the quick action buttons below for specific topics!",
+                category: "general",
+                source: "Government of India - PwD FAQ",
+                pdf_reference: "Complete FAQ Document"
+            };
+        }
+
+        function displayFormattedResponse(responseData) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'chat-message bot-message';
+            
+            let content = `
+                <div style="margin-bottom: 10px;">
+                    <strong>${responseData.title}</strong>
+                    <span class="category-tag">${responseData.category}</span>
+                </div>
+                <div class="info-card">
+                    ${formatContent(responseData.content)}
+                </div>
+                <div class="pdf-reference">
+                    📄 <strong>Source:</strong> ${responseData.source}<br>
+                    📖 <strong>Reference:</strong> ${responseData.pdf_reference}
+                </div>
+            `;
+            
+            messageDiv.innerHTML = content;
+            chatBody.appendChild(messageDiv);
+            chatBody.scrollTop = chatBody.scrollHeight;
+            speakText(responseData.title + '. ' + responseData.content);
+        }
+
+        function formatContent(content) {
+            return content
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\n/g, '<br>')
+                .replace(/•(.*?)(?=\n|$)/g, '<div style="margin: 8px 0; padding-left: 15px;">• $1</div>');
+        }
+
+        const serviceHubContent = {
+            employment: {
+                title: 'Employment Reservations for PwD',
+                overview: 'Central Government and many state governments reserve 3% of posts for Persons with Disabilities across identified job categories.',
+                highlights: [
+                    '3% reservation for PwD in central government jobs and most public sector undertakings.',
+                    'Reservation is provided in identified posts across all disability categories.',
+                    'Officials are required to fill reserved vacancies separately from the general merit list.',
+                    'People with benchmark disability (40% and above) are eligible for benefits.'
+                ],
+                steps: [
+                    'Obtain a valid PwD certificate from an authorized medical board.',
+                    'Apply for government job vacancies and select the PwD reservation category during application.',
+                    'Keep the certificate and disability details ready for verification at the interview or document stage.',
+                    'Check the official notification for category-specific posts and relaxations.'
+                ],
+                resources: [
+                    { label: 'PwD Reservation Rules', text: 'Reservation is available in central government jobs and many state/public sector roles.', link: '/services' },
+                    { label: 'Certificate Requirement', text: 'A 40% or greater disability certificate is required to claim reservation.', link: '/services' }
+                ]
+            },
+            education: {
+                title: 'Education Benefits for PwD',
+                overview: 'Disabled students receive reserved seats, scholarships, exam accommodations, and support under central and state education schemes.',
+                highlights: [
+                    'Reserved seats up to 5% in central government educational institutions.',
+                    'Scholarships and fee waivers for eligible PwD students.',
+                    'Exam concessions such as extra time, scribe assistance, and assistive devices.',
+                    'Support for higher education through special schemes and disability cells.'
+                ],
+                steps: [
+                    'Register with the relevant educational institution’s disability cell.',
+                    'Submit your disability certificate and required documents during admission.',
+                    'Request exam accommodations well before the exam date.',
+                    'Look for government scholarships and special fee relaxation programs.'
+                ],
+                resources: [
+                    { label: 'Reserved Educational Seats', text: 'Dedicated quotas exist in universities, colleges and technical institutions.', link: '/services' },
+                    { label: 'Scholarships & Support', text: 'Scholarships are offered to PwD candidates by central and state governments.', link: '/services' }
+                ]
+            },
+            healthcare: {
+                title: 'Healthcare Schemes for PwD',
+                overview: 'Healthcare support includes free treatment, rehabilitation services, assistive devices and wellness programs for persons with disabilities.',
+                highlights: [
+                    'Access to free or subsidized healthcare services at government hospitals.',
+                    'Provision of assistive devices like wheelchairs, hearing aids and prosthetics.',
+                    'Rehabilitation support through specialised centres and physiotherapy units.',
+                    'Access to vaccination, mental healthcare and preventive health checkups.'
+                ],
+                steps: [
+                    'Locate the nearest government disability rehabilitation centre or hospital.',
+                    'Keep your disability certificate and identity documents ready.',
+                    'Apply for assistive devices through the appropriate health scheme.',
+                    'Follow up with local health authorities on treatment and rehabilitation support.'
+                ],
+                resources: [
+                    { label: 'Assistive Device Program', text: 'Government grants help provide devices such as wheelchairs and mobility aids.', link: '/services' },
+                    { label: 'Rehab & Therapy', text: 'Rehabilitation services are available at dedicated disability centres.', link: '/services' }
+                ]
+            },
+            financial: {
+                title: 'Financial Assistance for PwD',
+                overview: 'PwD citizens can access pensions, subsidies, concessional loans and other financial support schemes from central and state governments.',
+                highlights: [
+                    'Disability pensions for eligible individuals in many states.',
+                    'Subsidies for assistive devices and medical treatment.',
+                    'Concessional bank loans and special credit facilities.',
+                    'Support for self-employment and skill development programs.'
+                ],
+                steps: [
+                    'Check the financial assistance scheme details available in your state.',
+                    'Apply with disability certificate, income proof and identity proof.',
+                    'Track application status through the scheme portal or local office.',
+                    'Use approved benefits for equipment, travel, education or healthcare as permitted.'
+                ],
+                resources: [
+                    { label: 'Disability Pension', text: 'Monthly pension support is available to eligible disabled citizens.', link: '/services' },
+                    { label: 'Concessional Loans', text: 'Special loan schemes support education and self-employment.', link: '/services' }
+                ]
+            },
+            certification: {
+                title: 'Disability Certification Process',
+                overview: 'A valid disability certificate is required to access most reservation and support schemes for PwD citizens.',
+                highlights: [
+                    'Certificates are issued by authorized medical boards recognized by government bodies.',
+                    'Minimum 40% disability is usually required to qualify for most benefits.',
+                    'Certificates can be permanent or time-limited depending on the condition.',
+                    'Proof of identity and medical documentation should be submitted during application.'
+                ],
+                steps: [
+                    'Visit the designated medical board or government hospital with medical records.',
+                    'Submit an application for disability certification along with required reports.',
+                    'Attend the medical board evaluation and assessment as scheduled.',
+                    'Collect the certificate once issued and keep copies for scheme applications.'
+                ],
+                resources: [
+                    { label: 'Certificate Eligibility', text: 'Most schemes require a certificate with at least 40% disability.', link: '/services' },
+                    { label: 'Medical Board Process', text: 'Understand the documentation and evaluation steps required for certification.', link: '/services' }
+                ]
+            },
+            legal: {
+                title: 'Legal Rights and Protections for PwD',
+                overview: 'PwD citizens are protected under laws that guarantee equality, accessibility and anti-discrimination rights in public life.',
+                highlights: [
+                    'Rights under the Rights of Persons with Disabilities Act, 2016.',
+                    'Legal protection from discrimination in education, employment and public services.',
+                    'Mandatory accessibility standards for public buildings and transport.',
+                    'Access to grievance redressal and legal help for rights violations.'
+                ],
+                steps: [
+                    'Know your rights under the RPwD Act and related rules.',
+                    'Request accessibility and reasonable accommodation where needed.',
+                    'File complaints with the appropriate authority if rights are denied.',
+                    'Seek help from legal aid organisations supporting PwD citizens.'
+                ],
+                resources: [
+                    { label: 'RPwD Act', text: 'The act ensures equal opportunities and non-discrimination for disabled persons.', link: '/services' },
+                    { label: 'Grievance Redress', text: 'Access legal support if accommodation or benefits are unfairly denied.', link: '/services' }
+                ]
+            },
+            travel: {
+                title: 'Travel Concessions for PwD',
+                overview: 'Travel concessions include rail, air, metro and public transport benefits for persons with disabilities.',
+                highlights: [
+                    'Railway concessions for PwD passengers and attendants at concessional fares.',
+                    'Airport assistance and special services for disabled travellers.',
+                    'State transport services often provide fare concessions and reserved seats.',
+                    'Accessible travel facilities are encouraged in public transport and stations.'
+                ],
+                steps: [
+                    'Check the entitlement letter or concession certificate offered for travel.',
+                    'Book tickets using PwD concessions through the authorized booking channel.',
+                    'Carry a valid disability certificate and identity proof while travelling.',
+                    'Use available assistance services at stations and airports if needed.'
+                ],
+                resources: [
+                    { label: 'Rail Concessions', text: 'Special travel rates and facilities exist for PwD passengers.', link: '/services' },
+                    { label: 'Airport Assistance', text: 'Disabled travellers can avail airport support services and priority access.', link: '/services' }
+                ]
+            }
+        };
+
+        function searchResources() {
+            const domain = document.getElementById('domain');
+            const resultDiv = document.getElementById('planResult');
+            if (!domain || !resultDiv) return;
+
+            const selectedValue = domain.value;
+            if (!selectedValue) {
+                resultDiv.innerHTML = `<div class="card" style="text-align:center;color:#b91c1c;background:#fee2e2;padding:20px;"><strong>Please choose a category before searching.</strong></div>`;
+                resultDiv.style.display = 'block';
+                return;
+            }
+
+            const categoryData = serviceHubContent[selectedValue];
+            if (!categoryData) {
+                resultDiv.innerHTML = `<div class="card" style="text-align:center;color:#7c3aed;background:#ede9fe;padding:20px;"><strong>No content is available for this category yet. Please select another option.</strong></div>`;
+                resultDiv.style.display = 'block';
+                return;
+            }
+
+            const itemsHtml = categoryData.highlights.map(item => `<li>${item}</li>`).join('');
+            const stepsHtml = categoryData.steps.map(step => `<li>${step}</li>`).join('');
+            const resourcesHtml = categoryData.resources.map(resource => `
+                <div class="resource-item card">
+                    <div class="resource-meta">
+                        <span class="meta-tag">${resource.label}</span>
+                    </div>
+                    <p>${resource.text}</p>
+                </div>
+            `).join('');
+
+            resultDiv.innerHTML = `
+                <div class="result-header fade-in-up">
+                    <h2>${categoryData.title}</h2>
+                    <p>${categoryData.overview}</p>
+                </div>
+                <div class="card fade-in-up" style="margin-bottom: 20px;">
+                    <h3>Key Benefits</h3>
+                    <ul style="margin: 12px 0 0 18px; color: #334155;">${itemsHtml}</ul>
+                </div>
+                <div class="card fade-in-up" style="margin-bottom: 20px;">
+                    <h3>How to access this benefit</h3>
+                    <ol style="margin: 12px 0 0 18px; color: #334155;">${stepsHtml}</ol>
+                </div>
+                <div class="result-header fade-in-up" style="margin-top: 10px;">
+                    <h3>Related resources</h3>
+                </div>
+                <div class="resource-list fade-in-up">
+                    ${resourcesHtml}
+                </div>
+            `;
+            resultDiv.style.display = 'block';
+            resultDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function addQuickActions() {
+            const quickActionsDiv = document.createElement('div');
+            quickActionsDiv.className = 'quick-actions';
+            
+            const actions = [
+                'Disability Definitions',
+                'Reservation Eligibility', 
+                'Job Identification',
+                'Own Merit'
+            ];
+            
+            actions.forEach(action => {
+                const button = document.createElement('button');
+                button.className = 'quick-action-btn';
+                button.textContent = action;
+                button.onclick = () => {
+                    chatInput.value = action;
+                    sendMessage();
+                };
+                quickActionsDiv.appendChild(button);
+            });
+            
+            chatBody.appendChild(quickActionsDiv);
+            chatBody.scrollTop = chatBody.scrollHeight;
+        }
+
+        // Initialize chatbot with welcome message when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            // Welcome message will show when chatbot is opened
+        });
+    </script>
+    <script src="{{ url_for('static', filename='js/voice_chatbot.js') }}"></script>
+
+</body>
+</html>
